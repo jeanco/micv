@@ -8,9 +8,54 @@ let filteredRequests = [];
 let currentRequest = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  initAdminThemeToggle();
   initAuth();
   initDashboard();
 });
+
+/* ==========================================================================
+   SISTEMA DE TEMA CLARO / OSCURO (WHITE MODE)
+   ========================================================================== */
+function initAdminThemeToggle() {
+  const adminToggle = document.getElementById('adminThemeToggle');
+  const loginToggle = document.getElementById('loginThemeToggle');
+  const toggles = [adminToggle, loginToggle].filter(Boolean);
+
+  const savedTheme = localStorage.getItem('micv_theme') || 'dark';
+  applyTheme(savedTheme);
+
+  toggles.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      applyTheme(newTheme);
+      localStorage.setItem('micv_theme', newTheme);
+    });
+  });
+
+  function applyTheme(theme) {
+    const isLight = theme === 'light';
+    if (isLight) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+
+    toggles.forEach(btn => {
+      const icon = btn.querySelector('i');
+      if (icon) {
+        if (isLight) {
+          icon.className = 'fa-solid fa-moon';
+          btn.setAttribute('title', 'Cambiar a Modo Oscuro');
+        } else {
+          icon.className = 'fa-solid fa-sun';
+          btn.setAttribute('title', 'Cambiar a Modo Claro');
+        }
+      }
+    });
+  }
+}
 
 /* ==========================================================================
    AUTENTICACIÓN & CONTROL DE SESIÓN

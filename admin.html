@@ -19,6 +19,18 @@
 
   <!-- Custom Admin CSS -->
   <link rel="stylesheet" href="assets/css/admin.css">
+
+  <!-- Inline theme pre-check to prevent flash of wrong theme -->
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('micv_theme') || 'dark';
+        if (theme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -26,6 +38,11 @@
        VISTA DE INICIO DE SESIÓN
        ========================================================================== -->
   <div class="login-wrapper" id="loginView">
+    <!-- Botón de cambio de tema en Login -->
+    <button type="button" class="btn-theme-toggle-admin login-theme-toggle" id="loginThemeToggle" title="Cambiar a Modo Claro / Oscuro" aria-label="Cambiar tema">
+      <i class="fa-solid fa-sun"></i>
+    </button>
+
     <div class="login-card">
       <div class="login-header">
         <div class="login-icon">
@@ -68,7 +85,7 @@
         </button>
       </form>
 
-      <a href="index.html" class="login-back">
+      <a href="./" class="login-back">
         <i class="fa-solid fa-arrow-left"></i> Volver a la página principal
       </a>
     </div>
@@ -89,7 +106,11 @@
       </div>
 
       <div class="user-section">
-        <a href="index.html" target="_blank" class="btn-view-site">
+        <!-- Botón de cambio de tema en Dashboard -->
+        <button type="button" class="btn-theme-toggle-admin" id="adminThemeToggle" title="Cambiar a Modo Claro / Oscuro" aria-label="Cambiar tema Claro u Oscuro">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+        <a href="./" target="_blank" class="btn-view-site">
           <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Página Web
         </a>
         <div class="user-badge">
