@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo | Solicitudes de Asesoría - Jean Carlos Anchapuri</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/img/profile.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom Admin CSS -->
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       VISTA DE INICIO DE SESIÓN
+       ========================================================================== -->
+  <div class="login-wrapper" id="loginView">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-icon">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <h2 class="login-title">Portal de Gestión</h2>
+        <p class="login-subtitle">Ingresa tus credenciales para administrar las solicitudes de asesoría</p>
+      </div>
+
+      <div class="login-error" id="loginError">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>Credenciales inválidas</span>
+      </div>
+
+      <form class="login-form" id="loginForm">
+        <div class="input-group">
+          <label for="adminUsername">Usuario Administrador</label>
+          <input type="text" id="adminUsername" class="input-field" placeholder="admin" required autocomplete="username">
+        </div>
+
+        <div class="input-group">
+          <label for="adminPassword">Contraseña</label>
+          <div class="password-container">
+            <input type="password" id="adminPassword" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="toggle-password" id="togglePassword" aria-label="Mostrar u ocultar contraseña">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.45rem; color: var(--text-muted); cursor: pointer;">
+            <input type="checkbox" id="rememberMe" checked>
+            Recordar mi sesión
+          </label>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Iniciar Sesión
+        </button>
+      </form>
+
+      <a href="index.html" class="login-back">
+        <i class="fa-solid fa-arrow-left"></i> Volver a la página principal
+      </a>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       VISTA DEL DASHBOARD ADMINISTRATIVO
+       ========================================================================== -->
+  <div class="admin-app" id="adminApp">
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="brand-section">
+        <div class="brand-logo">JC</div>
+        <div class="brand-info">
+          <h4>Jean Carlos Anchapuri</h4>
+          <span>Panel de Asesorías</span>
+        </div>
+      </div>
+
+      <div class="user-section">
+        <a href="index.html" target="_blank" class="btn-view-site">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Página Web
+        </a>
+        <div class="user-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="currentUserName">Jean Carlos Anchapuri</span>
+        </div>
+        <button class="btn-logout" id="logoutBtn" title="Cerrar sesión">
+          <i class="fa-solid fa-right-from-bracket"></i> Salir
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-main">
+      <div class="dashboard-header">
+        <div>
+          <h1>Solicitudes de Asesoría</h1>
+          <p>Gestiona los prospectos y solicitudes de consultoría recibidos a través de tu página web.</p>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon blue">
+            <i class="fa-solid fa-inbox"></i>
+          </div>
+          <div class="kpi-info">
+            <h3 id="kpiTotal">0</h3>
+            <span>Total Recibidas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon amber">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div class="kpi-info">
+            <h3 id="kpiPending">0</h3>
+            <span>Pendientes por Atender</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon cyan">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div class="kpi-info">
+            <h3 id="kpiContacted">0</h3>
+            <span>En Asesoría / Contactados</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon green">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="kpi-info">
+            <h3 id="kpiCompleted">0</h3>
+            <span>Asesorías Concretadas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Section -->
+      <div class="table-card">
+        <div class="table-controls">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar por cliente, empresa, correo, teléfono...">
+          </div>
+
+          <div class="filter-actions">
+            <select id="statusFilter" class="select-filter">
+              <option value="todos">Todos los Estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="contactado">Contactado</option>
+              <option value="en_progreso">En Asesoría</option>
+              <option value="completado">Completado</option>
+            </select>
+
+            <select id="serviceFilter" class="select-filter">
+              <option value="todos">Todos los Servicios</option>
+              <option value="Facturación Electrónica SUNAT">Facturación SUNAT</option>
+              <option value="Transformación Digital & Procesos">Transformación Digital</option>
+              <option value="Gestión Ágil & Scrum Master">Scrum & Agilidad</option>
+              <option value="Desarrollo de Software a Medida">Desarrollo Software</option>
+              <option value="Capacitaciones & Workshops">Workshops</option>
+              <option value="Otra Consulta">Otras Consultas</option>
+            </select>
+
+            <button class="btn-action" id="refreshBtn" title="Refrescar listado">
+              <i class="fa-solid fa-rotate-right"></i> Actualizar
+            </button>
+
+            <button class="btn-action btn-export" id="exportBtn" title="Descargar reporte en CSV para Excel">
+              <i class="fa-solid fa-file-excel"></i> Exportar a Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="leads-table">
+            <thead>
+              <tr>
+                <th>Fecha / Hora</th>
+                <th>Cliente y Empresa</th>
+                <th>Contacto</th>
+                <th>Servicio Requerido</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <!-- Carga dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE DETALLE Y GESTIÓN DE SOLICITUD
+       ========================================================================== -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-detail-card">
+      <div class="modal-detail-header">
+        <h3>Detalle de la Solicitud</h3>
+        <button class="modal-detail-close" id="closeDetailModal">&times;</button>
+      </div>
+
+      <div class="modal-detail-body">
+        <div class="detail-row">
+          <div class="detail-item">
+            <span>Cliente / Solicitante</span>
+            <strong id="modalClientName">-</strong>
+          </div>
+          <div class="detail-item">
+            <span>Empresa u Organización</span>
+            <strong id="modalCompany">-</strong>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span>Correo Electrónico</span>
+            <strong><a id="modalEmail" href="#" style="color: var(--cyan-light);">-</a></strong>
+          </div>
+          <div class="detail-item">
+            <span>Teléfono / Celular</span>
+            <strong id="modalPhone">-</strong>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span>Servicio de Interés</span>
+            <strong id="modalService" style="color: var(--cyan);">-</strong>
+          </div>
+          <div class="detail-item">
+            <span>Presupuesto Estimado</span>
+            <strong id="modalBudget">-</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span>Fecha de Recepción</span>
+          <strong id="modalDate">-</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Mensaje / Requerimiento del Cliente</span>
+          <div class="detail-message-box" id="modalMessage">-</div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span>Cambiar Estado de Atención</span>
+            <select id="modalStatusSelect" class="input-field" style="margin-top: 0.35rem;">
+              <option value="pendiente">Pendiente</option>
+              <option value="contactado">Contactado</option>
+              <option value="en_progreso">En Asesoría / Desarrollo</option>
+              <option value="completado">Completado / Éxito</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span>Notas Internas del Administrador (Privadas)</span>
+          <textarea id="modalAdminNotes" class="input-field" rows="3" placeholder="Añade anotaciones sobre llamadas, acuerdos de precios, reuniones fijadas..." style="margin-top: 0.35rem;"></textarea>
+        </div>
+      </div>
+
+      <div class="detail-actions-bar">
+        <a href="#" id="modalDirectWaBtn" target="_blank" class="btn-action" style="background: rgba(37, 211, 102, 0.2); border-color: #25d366; color: #25d366;">
+          <i class="fa-brands fa-whatsapp"></i> Chatear por WhatsApp
+        </a>
+
+        <button class="btn-login" id="saveChangesBtn" style="padding: 0.65rem 1.25rem; font-size: 0.9rem; margin-top: 0;">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase Connection Functions -->
+  <script src="assets/js/supabase.js"></script>
+  <!-- Admin Script -->
+  <script src="assets/js/admin.js"></script>
+
+</body>
+</html>
