@@ -152,6 +152,271 @@ async function deleteRequestById(id) {
   }
 }
 
+/* ==========================================================================
+   CMS DINÁMICO: MÉTODOS DE LECTURA Y ESCRITURA
+   ========================================================================== */
+
+// 1. Configuración General y Hero
+async function fetchSiteConfig() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_config').select('*');
+    if (error) throw error;
+    const configMap = {};
+    (data || []).forEach(item => { configMap[item.key] = item.value; });
+    return { success: true, data: configMap };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function updateSiteConfig(key, value) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient
+      .from('site_config')
+      .upsert({ key, value, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// 2. Bondades / Diferenciadores
+async function fetchBonds() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_bonds').select('*').order('display_order', { ascending: true });
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function saveBond(bond) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const payload = {
+      icon: bond.icon,
+      title: bond.title,
+      description: bond.description,
+      bullets: bond.bullets || [],
+      display_order: Number(bond.display_order) || 0
+    };
+    let res;
+    if (bond.id) {
+      res = await supabaseClient.from('site_bonds').update(payload).eq('id', bond.id).select();
+    } else {
+      res = await supabaseClient.from('site_bonds').insert([payload]).select();
+    }
+    if (res.error) throw res.error;
+    return { success: true, data: res.data[0] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteBond(id) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient.from('site_bonds').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// 3. Experiencia Laboral
+async function fetchExperience() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_experience').select('*').order('display_order', { ascending: true });
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function saveExperience(exp) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const payload = {
+      company: exp.company,
+      role: exp.role,
+      period: exp.period,
+      description: exp.description,
+      tasks: exp.tasks || [],
+      display_order: Number(exp.display_order) || 0
+    };
+    let res;
+    if (exp.id) {
+      res = await supabaseClient.from('site_experience').update(payload).eq('id', exp.id).select();
+    } else {
+      res = await supabaseClient.from('site_experience').insert([payload]).select();
+    }
+    if (res.error) throw res.error;
+    return { success: true, data: res.data[0] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteExperience(id) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient.from('site_experience').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// 4. Educación y Certificaciones
+async function fetchEducation() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_education').select('*').order('display_order', { ascending: true });
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function saveEducation(edu) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const payload = {
+      title: edu.title,
+      institution: edu.institution,
+      badge_type: edu.badge_type || 'cert',
+      badge_label: edu.badge_label,
+      description: edu.description,
+      meta_info: edu.meta_info,
+      display_order: Number(edu.display_order) || 0
+    };
+    let res;
+    if (edu.id) {
+      res = await supabaseClient.from('site_education').update(payload).eq('id', edu.id).select();
+    } else {
+      res = await supabaseClient.from('site_education').insert([payload]).select();
+    }
+    if (res.error) throw res.error;
+    return { success: true, data: res.data[0] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteEducation(id) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient.from('site_education').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// 5. Servicios de Asesoría
+async function fetchServices() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_services').select('*').order('display_order', { ascending: true });
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function saveService(srv) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const payload = {
+      name: srv.name,
+      icon: srv.icon,
+      description: srv.description,
+      features: srv.features || [],
+      is_featured: Boolean(srv.is_featured),
+      display_order: Number(srv.display_order) || 0
+    };
+    let res;
+    if (srv.id) {
+      res = await supabaseClient.from('site_services').update(payload).eq('id', srv.id).select();
+    } else {
+      res = await supabaseClient.from('site_services').insert([payload]).select();
+    }
+    if (res.error) throw res.error;
+    return { success: true, data: res.data[0] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteService(id) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient.from('site_services').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// 6. Workshops y Talleres
+async function fetchWorkshops() {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { data, error } = await supabaseClient.from('site_workshops').select('*').order('display_order', { ascending: true });
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function saveWorkshop(ws) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const payload = {
+      title: ws.title,
+      organization: ws.organization,
+      badge: ws.badge,
+      image_url: ws.image_url,
+      display_order: Number(ws.display_order) || 0
+    };
+    let res;
+    if (ws.id) {
+      res = await supabaseClient.from('site_workshops').update(payload).eq('id', ws.id).select();
+    } else {
+      res = await supabaseClient.from('site_workshops').insert([payload]).select();
+    }
+    if (res.error) throw res.error;
+    return { success: true, data: res.data[0] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteWorkshop(id) {
+  try {
+    if (!supabaseClient) throw new Error('Cliente Supabase no disponible');
+    const { error } = await supabaseClient.from('site_workshops').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 // Exponer en el objeto global
 window.MicvSupabase = {
   client: supabaseClient,
@@ -159,5 +424,23 @@ window.MicvSupabase = {
   loginAdminUser,
   fetchAllRequests,
   updateRequest,
-  deleteRequestById
+  deleteRequestById,
+  // CMS Methods
+  fetchSiteConfig,
+  updateSiteConfig,
+  fetchBonds,
+  saveBond,
+  deleteBond,
+  fetchExperience,
+  saveExperience,
+  deleteExperience,
+  fetchEducation,
+  saveEducation,
+  deleteEducation,
+  fetchServices,
+  saveService,
+  deleteService,
+  fetchWorkshops,
+  saveWorkshop,
+  deleteWorkshop
 };

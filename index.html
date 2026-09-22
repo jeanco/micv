@@ -54,7 +54,10 @@
       </nav>
 
       <div class="nav-actions">
-        <a href="admin.html" class="btn-icon-admin" title="Ingresar al Panel de Administración" aria-label="Ingresar al Administrador">
+        <button class="btn-theme-toggle" id="themeToggle" aria-label="Cambiar entre modo claro y oscuro" title="Cambiar tema Claro / Oscuro">
+          <i class="fa-solid fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="admin" class="btn-icon-admin" title="Ingresar al Panel de Administración" aria-label="Ingresar al Administrador">
           <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </a>
         <a href="#contacto" class="btn btn-primary btn-header-cta">
@@ -75,19 +78,19 @@
       <div class="hero-grid">
         <div class="hero-content">
           <div class="hero-badge-container">
-            <span class="hero-pill glow">
-              <span class="pulse-dot"></span> Disponible para Asesorías y Proyectos
+            <span class="hero-pill glow" id="heroBadgePill">
+              <span class="pulse-dot"></span> <span id="heroBadgeText">Disponible para Asesorías y Proyectos</span>
             </span>
             <span class="hero-pill">
               <i class="fa-solid fa-certificate text-amber"></i> Certified Scrum Master
             </span>
           </div>
 
-          <h1 class="hero-title">
+          <h1 class="hero-title" id="heroTitle">
             Transformo Empresas con <span class="gradient-text">Tecnología Ágil</span> y Soluciones Digitales
           </h1>
 
-          <p class="hero-description">
+          <p class="hero-description" id="heroDescription">
             Soy <strong>Jean Carlos Anchapuri Mamani</strong>, Ingeniero en Informática y Sistemas con Postgrado de Maestría en TI (UNJBG). Especialista en <strong>Facturación Electrónica SUNAT</strong>, Dirección de Proyectos de Software y Asesoría en Digitalización Empresarial con más de 10 años impulsando organizaciones al siguiente nivel.
           </p>
 
@@ -102,15 +105,15 @@
 
           <div class="hero-stats">
             <div class="stat-item">
-              <h3>+<span class="counter-val" data-target="10">0</span></h3>
+              <h3>+<span class="counter-val" id="statYears" data-target="10">0</span></h3>
               <p>Años de Experiencia Profesional</p>
             </div>
             <div class="stat-item">
-              <h3>+<span class="counter-val" data-target="50">0</span></h3>
+              <h3>+<span class="counter-val" id="statProjects" data-target="50">0</span></h3>
               <p>Proyectos & Empresas Asesoradas</p>
             </div>
             <div class="stat-item">
-              <h3>+<span class="counter-val" data-target="300">0</span></h3>
+              <h3>+<span class="counter-val" id="statTrained" data-target="300">0</span></h3>
               <p>Empresarios Capacitados</p>
             </div>
           </div>
@@ -222,7 +225,7 @@
         </p>
       </div>
 
-      <div class="bonds-grid">
+      <div class="bonds-grid" id="bondsGrid">
         <div class="bond-card">
           <div class="bond-icon">
             <i class="fa-solid fa-code-compare"></i>
@@ -324,7 +327,7 @@
         </p>
       </div>
 
-      <div class="timeline">
+      <div class="timeline" id="experienceTimeline">
         <!-- Item 1: Zs Outdoor EIRL -->
         <div class="timeline-item">
           <div class="timeline-dot"></div>
@@ -450,7 +453,7 @@
         </p>
       </div>
 
-      <div class="education-grid">
+      <div class="education-grid" id="educationGrid">
         <div class="edu-card">
           <span class="edu-badge master">Postgrado</span>
           <h3 class="edu-title">Egresado de Maestría en Ingeniería en Informática y Sistemas</h3>
@@ -515,7 +518,7 @@
         </p>
       </div>
 
-      <div class="services-grid">
+      <div class="services-grid" id="servicesGrid">
         <!-- Servicio 1 -->
         <div class="service-card featured">
           <span class="featured-pill">Alta Demanda</span>
@@ -633,7 +636,31 @@
         </p>
       </div>
 
-      <div class="workshops-grid">
+      <div class="workshops-grid" id="workshopsGrid">
+        <!-- Taller 1: IESTP San Luis - Emprendimiento -->
+        <div class="workshop-card">
+          <div class="workshop-thumb">
+            <img src="assets/img/workshop-sanluis-emprendimiento.jpg" alt="Taller Emprendimiento Tecnológico IESTP San Luis">
+            <span class="workshop-badge">IESTP "SAN LUIS"</span>
+          </div>
+          <div class="workshop-info">
+            <h4 class="workshop-title">Emprendimiento tecnológico en la práctica: de una idea a un producto digital</h4>
+            <p class="workshop-org">Área de Investigación - IESTP "San Luis"</p>
+          </div>
+        </div>
+
+        <!-- Taller 2: IESTP San Luis - Scrum -->
+        <div class="workshop-card">
+          <div class="workshop-thumb">
+            <img src="assets/img/workshop-sanluis-scrum.jpg" alt="Taller Metodología Scrum IESTP San Luis">
+            <span class="workshop-badge">ÁREA DE INVESTIGACIÓN</span>
+          </div>
+          <div class="workshop-info">
+            <h4 class="workshop-title">Transformando la forma de desarrollar software: mi experiencia aplicando Scrum</h4>
+            <p class="workshop-org">IESTP "San Luis" & Área de Investigación</p>
+          </div>
+        </div>
+
         <div class="workshop-card">
           <div class="workshop-thumb">
             <img src="assets/img/workshop-produce.jpg" alt="Taller Emprendedor Peruano PRODUCE">
@@ -718,23 +745,23 @@
           </p>
 
           <div class="direct-contacts">
-            <a href="https://wa.me/51995921377" target="_blank" class="direct-item">
+            <a href="https://wa.me/51995921377" target="_blank" class="direct-item" id="directWaLink">
               <div class="direct-icon">
                 <i class="fa-brands fa-whatsapp"></i>
               </div>
               <div class="direct-text">
                 <span>WhatsApp Directo</span>
-                <strong>+51 995 921 377</strong>
+                <strong id="contactPhoneDisplay">+51 995 921 377</strong>
               </div>
             </a>
 
-            <a href="mailto:Jcc.informatico@gmail.com" class="direct-item">
+            <a href="mailto:Jcc.informatico@gmail.com" class="direct-item" id="directEmailLink">
               <div class="direct-icon">
                 <i class="fa-regular fa-envelope"></i>
               </div>
               <div class="direct-text">
                 <span>Correo Electrónico</span>
-                <strong>Jcc.informatico@gmail.com</strong>
+                <strong id="contactEmailDisplay">Jcc.informatico@gmail.com</strong>
               </div>
             </a>
 
@@ -744,7 +771,7 @@
               </div>
               <div class="direct-text">
                 <span>Ubicación y Cobertura</span>
-                <strong>Tacna, Perú (Atención Nacional e Internacional)</strong>
+                <strong id="contactLocationDisplay">Tacna, Perú (Atención Nacional e Internacional)</strong>
               </div>
             </div>
 
@@ -754,7 +781,7 @@
               </div>
               <div class="direct-text">
                 <span>Registro Legal</span>
-                <strong>RUC: 10473385924 | DNI: 47338592</strong>
+                <strong id="contactLegalDisplay">RUC: 10473385924 | DNI: 47338592</strong>
               </div>
             </div>
           </div>
@@ -910,7 +937,7 @@
             <a href="https://wa.me/51995921377" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp: 995 921 377</a>
             <a href="mailto:Jcc.informatico@gmail.com"><i class="fa-regular fa-envelope"></i> Jcc.informatico@gmail.com</a>
             <a href="#"><i class="fa-solid fa-location-dot"></i> Tacna, Perú</a>
-            <a href="admin.html" style="color: var(--primary-light); font-weight: 600; margin-top: 0.5rem;">
+            <a href="admin" style="color: var(--primary-light); font-weight: 600; margin-top: 0.5rem;">
               <i class="fa-solid fa-shield-halved"></i> Panel de Administración
             </a>
           </div>

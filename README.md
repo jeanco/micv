@@ -33,9 +33,6 @@ Si quieres editarlo en tu computadora:
 
 Las credenciales configuradas para acceder a tu panel de administración son las siguientes:
 
-URL del Panel: 
-
-admin.html
- (o en tu navegador: http://localhost:8085/admin.html o http://localhost/micv/admin.html)
-Usuario: admin
-Contraseña: JeanCarlos2024!
+- **URL del Panel:** `http://micv.creala.online/admin` (o en local: `http://localhost:8085/admin` o `http://localhost/micv/admin`)
+- **Usuario:** `admin`
+- **Contraseña:** `JeanCarlos2024!`

@@ -3,12 +3,48 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeToggle();
   initNavbar();
   initCounters();
   initServiceButtons();
   initLightbox();
   initContactForm();
+  loadDynamicContent();
 });
+
+/* ==========================================================================
+   CAMBIO DE TEMA (MODO CLARO / OSCURO)
+   ========================================================================== */
+function initThemeToggle() {
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  if (!themeToggle || !themeIcon) return;
+
+  // Cargar preferencia guardada
+  const savedTheme = localStorage.getItem('micv_theme') || 'dark';
+  applyTheme(savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    applyTheme(newTheme);
+    localStorage.setItem('micv_theme', newTheme);
+  });
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      themeIcon.classList.remove('fa-sun');
+      themeIcon.classList.add('fa-moon');
+      themeToggle.setAttribute('title', 'Cambiar a Modo Oscuro');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      themeIcon.classList.remove('fa-moon');
+      themeIcon.classList.add('fa-sun');
+      themeToggle.setAttribute('title', 'Cambiar a Modo Claro');
+    }
+  }
+}
 
 /* ==========================================================================
    NAVBAR & SCROLL SPY
@@ -284,4 +320,257 @@ function initContactForm() {
       }
     });
   }
+}
+
+/* ==========================================================================
+   CARGA DINÁMICA DE CONTENIDOS DESDE SUPABASE (CMS)
+   ========================================================================== */
+async function loadDynamicContent() {
+  if (!window.MicvSupabase) return;
+
+  // 1. Configuración General (Hero, Estadísticas, Contacto)
+  try {
+    const cfgRes = await window.MicvSupabase.fetchSiteConfig();
+    if (cfgRes.success && cfgRes.data) {
+      const cfg = cfgRes.data;
+      if (cfg.hero_badge) {
+        const badgeEl = document.getElementById('heroBadgeText');
+        if (badgeEl) badgeEl.innerText = cfg.hero_badge;
+      }
+      if (cfg.hero_title_p1) {
+        const titleEl = document.getElementById('heroTitle');
+        if (titleEl) {
+          titleEl.innerHTML = `${escapeHtml(cfg.hero_title_p1)} <span class="gradient-text">${escapeHtml(cfg.hero_title_highlight || '')}</span> ${escapeHtml(cfg.hero_title_p2 || '')}`;
+        }
+      }
+      if (cfg.hero_description) {
+        const descEl = document.getElementById('heroDescription');
+        if (descEl) descEl.innerHTML = cfg.hero_description;
+      }
+      if (cfg.stat_years) {
+        const el = document.getElementById('statYears');
+        if (el) { el.setAttribute('data-target', cfg.stat_years); el.innerText = cfg.stat_years; }
+      }
+      if (cfg.stat_projects) {
+        const el = document.getElementById('statProjects');
+        if (el) { el.setAttribute('data-target', cfg.stat_projects); el.innerText = cfg.stat_projects; }
+      }
+      if (cfg.stat_trained) {
+        const el = document.getElementById('statTrained');
+        if (el) { el.setAttribute('data-target', cfg.stat_trained); el.innerText = cfg.stat_trained; }
+      }
+      if (cfg.contact_phone) {
+        const el = document.getElementById('contactPhoneDisplay');
+        if (el) el.innerText = cfg.contact_phone;
+      }
+      if (cfg.contact_email) {
+        const el = document.getElementById('contactEmailDisplay');
+        if (el) el.innerText = cfg.contact_email;
+      }
+      if (cfg.contact_location) {
+        const el = document.getElementById('contactLocationDisplay');
+        if (el) el.innerText = cfg.contact_location;
+      }
+      if (cfg.contact_legal) {
+        const el = document.getElementById('contactLegalDisplay');
+        if (el) el.innerText = cfg.contact_legal;
+      }
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Hero/Config');
+  }
+
+  // 2. Bondades
+  try {
+    const bondsRes = await window.MicvSupabase.fetchBonds();
+    if (bondsRes.success && bondsRes.data && bondsRes.data.length > 0) {
+      renderBonds(bondsRes.data);
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Bondades');
+  }
+
+  // 3. Experiencia
+  try {
+    const expRes = await window.MicvSupabase.fetchExperience();
+    if (expRes.success && expRes.data && expRes.data.length > 0) {
+      renderExperience(expRes.data);
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Experiencia');
+  }
+
+  // 4. Educación
+  try {
+    const eduRes = await window.MicvSupabase.fetchEducation();
+    if (eduRes.success && eduRes.data && eduRes.data.length > 0) {
+      renderEducation(eduRes.data);
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Educación');
+  }
+
+  // 5. Servicios
+  try {
+    const srvRes = await window.MicvSupabase.fetchServices();
+    if (srvRes.success && srvRes.data && srvRes.data.length > 0) {
+      renderServices(srvRes.data);
+      initServiceButtons();
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Servicios');
+  }
+
+  // 6. Workshops
+  try {
+    const wsRes = await window.MicvSupabase.fetchWorkshops();
+    if (wsRes.success && wsRes.data && wsRes.data.length > 0) {
+      renderWorkshops(wsRes.data);
+      initLightbox();
+    }
+  } catch (e) {
+    console.warn('Fallback a contenido estático en Workshops');
+  }
+}
+
+function renderBonds(bonds) {
+  const container = document.getElementById('bondsGrid');
+  if (!container) return;
+
+  let html = '';
+  bonds.forEach(bond => {
+    let bulletsHtml = '';
+    const bullets = Array.isArray(bond.bullets) ? bond.bullets : [];
+    bullets.forEach(b => {
+      bulletsHtml += `<li><i class="fa-solid fa-circle-check"></i> ${escapeHtml(b)}</li>`;
+    });
+
+    html += `
+      <div class="bond-card">
+        <div class="bond-icon">
+          <i class="${escapeHtml(bond.icon || 'fa-solid fa-star')}"></i>
+        </div>
+        <h3 class="bond-title">${escapeHtml(bond.title)}</h3>
+        <p class="bond-desc">${escapeHtml(bond.description)}</p>
+        ${bulletsHtml ? `<ul class="bond-bullets">${bulletsHtml}</ul>` : ''}
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function renderExperience(items) {
+  const container = document.getElementById('experienceTimeline');
+  if (!container) return;
+
+  let html = '';
+  items.forEach(item => {
+    let tasksHtml = '';
+    const tasks = Array.isArray(item.tasks) ? item.tasks : [];
+    tasks.forEach(t => {
+      tasksHtml += `<li><i class="fa-solid fa-angle-right"></i> ${escapeHtml(t)}</li>`;
+    });
+
+    html += `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <h3 class="timeline-role">${escapeHtml(item.role)}</h3>
+              <span class="timeline-company">${escapeHtml(item.company)}</span>
+            </div>
+            <span class="timeline-date"><i class="fa-regular fa-calendar"></i> ${escapeHtml(item.period)}</span>
+          </div>
+          <p class="timeline-desc">${escapeHtml(item.description)}</p>
+          ${tasksHtml ? `<ul class="timeline-tasks">${tasksHtml}</ul>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function renderEducation(items) {
+  const container = document.getElementById('educationGrid');
+  if (!container) return;
+
+  let html = '';
+  items.forEach(item => {
+    html += `
+      <div class="edu-card">
+        <span class="edu-badge ${escapeHtml(item.badge_type || 'cert')}">${escapeHtml(item.badge_label || 'Certificado')}</span>
+        <h3 class="edu-title">${escapeHtml(item.title)}</h3>
+        <p class="edu-institution">${escapeHtml(item.institution)}</p>
+        <p class="bond-desc">${escapeHtml(item.description)}</p>
+        <div class="edu-meta">${escapeHtml(item.meta_info)}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function renderServices(items) {
+  const container = document.getElementById('servicesGrid');
+  if (!container) return;
+
+  let html = '';
+  items.forEach(srv => {
+    let featuresHtml = '';
+    const features = Array.isArray(srv.features) ? srv.features : [];
+    features.forEach(f => {
+      featuresHtml += `<li><i class="fa-solid fa-check"></i> ${escapeHtml(f)}</li>`;
+    });
+
+    const isFeatured = srv.is_featured;
+    const btnClass = isFeatured ? 'btn btn-primary' : 'btn btn-outline';
+
+    html += `
+      <div class="service-card ${isFeatured ? 'featured' : ''}">
+        ${isFeatured ? `<span class="featured-pill">Alta Demanda</span>` : ''}
+        <div class="service-icon-box">
+          <i class="${escapeHtml(srv.icon || 'fa-solid fa-laptop-code')}"></i>
+        </div>
+        <h3 class="service-name">${escapeHtml(srv.name)}</h3>
+        <p class="service-description">${escapeHtml(srv.description)}</p>
+        ${featuresHtml ? `<ul class="service-features">${featuresHtml}</ul>` : ''}
+        <a href="#contacto" class="${btnClass} btn-service btn-select-service" data-service="${escapeHtml(srv.name)}">
+          Solicitar esta Asesoría <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function renderWorkshops(items) {
+  const container = document.getElementById('workshopsGrid');
+  if (!container) return;
+
+  let html = '';
+  items.forEach(ws => {
+    html += `
+      <div class="workshop-card">
+        <div class="workshop-thumb">
+          <img src="${escapeHtml(ws.image_url)}" alt="${escapeHtml(ws.title)}">
+          <span class="workshop-badge">${escapeHtml(ws.badge || 'WORKSHOP')}</span>
+        </div>
+        <div class="workshop-info">
+          <h4 class="workshop-title">${escapeHtml(ws.title)}</h4>
+          <p class="workshop-org">${escapeHtml(ws.organization)}</p>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
